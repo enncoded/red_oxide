@@ -475,9 +475,13 @@ async fn handle_url(
             )
             .await?;
 
-            let transcode_folder_path = output_dir.join(&folder_path);
+            let transcode_folder_path = if output_dir.eq(&folder_path) {
+                &folder_path
+            } else {
+                &output_dir.join(&folder_path)
+            };
 
-            copy_other_allowed_files(&flac_path_clone, &flac_path_clone, &transcode_folder_path)
+            copy_other_allowed_files(&flac_path_clone, &flac_path_clone, transcode_folder_path)
                 .await?;
 
             return Ok::<(PathBuf, ReleaseType, String), anyhow::Error>((
